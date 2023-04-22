@@ -87,7 +87,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 			updatedBook.ID = params["id"]
 			library = append(library, updatedBook)
 			json.NewEncoder(w).Encode(updatedBook)
-			return
+			break
 		}
 	}
 }

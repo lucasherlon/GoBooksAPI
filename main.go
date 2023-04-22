@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -12,15 +11,17 @@ import (
 )
 
 type Book struct {
-	ID string `json: "id"`
-	Title string `json: "title"`
-	Author string `json: "author"`
-	Publisher string `json: "publisher"`
-	Year string `json: "year"`
+	ID string `json: "Id"`
+	Title string `json: "Title"`
+	Author string `json: "Author"`
+	Publisher string `json: "Publisher"`
+	Year string `json: "Year"`
 }
 
 // Repository of books
 var library []Book
+
+var id int = 0
 
 // Get all the movies in the library.
 func getBooks(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +58,14 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 func createBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var book Book
-	_ = json.NewDecoder(r.Body).Decode(&book)
-	book.ID = strconv.Itoa((rand.Intn(1000000)))
+	err := json.NewDecoder(r.Body).Decode(&book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		json.NewEncoder(w).Encode("Something went wrong")
+		return
+	}
+	id++
+	book.ID = strconv.Itoa(id)
 	library = append(library, book)
 	json.NewEncoder(w).Encode(book)
 }
@@ -72,7 +79,12 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 		if book.ID == params["id"] {
 			library = append(library[:index], library[index+1:]...)
 			var updatedBook Book
-			_ = json.NewDecoder(r.Body).Decode(&updatedBook)
+			err := json.NewDecoder(r.Body).Decode(&updatedBook)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				json.NewEncoder(w).Encode("Something went wrong")
+				return
+			}
 			updatedBook.ID = params["id"]
 			library = append(library, updatedBook)
 			json.NewEncoder(w).Encode(updatedBook)
@@ -84,7 +96,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := mux.NewRouter()
 
-	library = append(library, Book{ID: "1", Title: "Example", Author: "Lucas", Publisher: "Example", Year: "2023"})
+	library = append(library, Book{ID: "0", Title: "Example", Author: "Lucas Herlon", Publisher: "Example", Year: "2023"})
 
 	r.HandleFunc("/api/books", getBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")

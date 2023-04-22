@@ -1,2 +1,2 @@
 # GoBooksAPI
-SImple REST API in GO using Mux
+SImple REST API in GO using Gorilla Mux

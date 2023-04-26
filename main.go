@@ -10,11 +10,11 @@ import (
 )
 
 type Book struct {
-	ID string `json: "id"`
-	Title string `json: "Title"`
-	Author string `json: "Author"`
-	Publisher string `json: "Publisher"`
-	Year string `json: "Year"`
+	ID          string `json: "id"`
+	Title       string `json: "Title"`
+	Author      string `json: "Author"`
+	Publisher   string `json: "Publisher"`
+	Year        string `json: "Year"`
 }
 
 // Repository of books

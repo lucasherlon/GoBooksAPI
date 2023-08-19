@@ -24,16 +24,16 @@ var id int = 0
 
 // Get all the movies in the library.
 func getBooks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(library)
 }
 
-// Get one book from the library according to its id.
-func getBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+// Get one book from the library according to its name.
+func getBookByName(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	for _, book := range library {
-		if book.ID == params["id"] {
+		if book.Title == params["title"] {
 			json.NewEncoder(w).Encode(book)
 			return
 		}
@@ -43,7 +43,7 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 
 // Delete a book in the library according to its id.
 func deleteBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	for index, book := range library {
 		if book.ID == params["id"] {
@@ -55,7 +55,7 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 
 // Create a new book and append it in the library.
 func createBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
 	var book Book
 	err := json.NewDecoder(r.Body).Decode(&book)
 	if err != nil {
@@ -71,7 +71,7 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 
 // Update a book in the library.
 func updateBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 
 	for index, book := range library {
@@ -98,7 +98,7 @@ func main() {
 	library = append(library, Book{ID: "0", Title: "Example", Author: "Lucas Herlon", Publisher: "Example", Year: "2023"})
 
 	r.HandleFunc("/api/books", getBooks).Methods("GET")
-	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
+	r.HandleFunc("/api/books/{title}", getBookByName).Methods("GET")
 	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
